@@ -9,88 +9,156 @@ public class StringCalc {
     }
 
     public double result(final String string) {
-        return parseString(string);
+        return calcImpl(string);
     }
 
-    private double parseString(final String string) {
+    private static final String sum = "+";
+    private static final String sub = "-";
+    private static final String mul = "*";
+    private static final String div = "/";
+
+    private enum Operations{
+        SUM{
+            public double action(double x, double y) {
+                return x + y;
+            }
+        },
+        SUBTRACT{
+            public double action(double x, double y) {
+                return x - y;
+            }
+        },
+        MULTIPLY{
+            public double action(double x, double y) {
+                return x * y;
+            }
+        },
+        DIVIDE{
+            public double action(double x, double y) {
+                return x / y;
+            }
+        };
+        public abstract double action(double x, double y);
+    }
+
+    private double calcImpl(final String string) {
         try {
             char firstSymbol = string.charAt(0);
             String[] parsedNumbers = string.split("\\+|\\-|\\*|\\/");
             String[] parsedOperators = string.split("[1234567890\\.a-z]*");
             int index = 0;
-            if (firstSymbol == '-') {
+            char subSymbol = sub.charAt(0);
+            if (firstSymbol == subSymbol) {
                 index++;
-                parsedNumbers[index] = "-" + parsedNumbers[index];
+                parsedNumbers[index] = subSymbol + parsedNumbers[index];
                 parsedOperators[0] = "";
             }
 
-            List<Integer> priorityList = new ArrayList<Integer>();
-            List<String> operationsList = new ArrayList<String>();
-
+            List<Operations> operationsList = new ArrayList<Operations>();
             for (String operator : parsedOperators) {
-                if (operator.equals("+")) {
-                    priorityList.add(0);
-                    operationsList.add("+");
-                } else if (operator.equals("-")) {
-                    priorityList.add(0);
-                    operationsList.add("-");
-                } else if (operator.equals("*")) {
-                    priorityList.add(1);
-                    operationsList.add("*");
-                } else if (operator.equals("/")) {
-                    priorityList.add(1);
-                    operationsList.add("/");
-                }
+                filterOperationSymbolsFromNonNumberSymbols(operationsList, operator);
             }
 
-            double[] numbers = new double[parsedNumbers.length - index];
-            for (int i = 0; i < parsedNumbers.length - index; i++) {
-                numbers[i] = Double.parseDouble(parsedNumbers[i + index]);
-            }
+            double[] numbersArray = new double[parsedNumbers.length - index];
+            parseNumbersFromStringToDouble(parsedNumbers, index, numbersArray);
 
-            String[] operationsArray = new String[operationsList.size()];
+            Operations[] operationsArray = new Operations[operationsList.size()];
             operationsList.toArray(operationsArray);
 
-            double result = 0;
-            if (operationsArray.length == 0) {
-                return numbers[0];
-            }
-
-            boolean flag = true;
-            double tmp = 0;
-            for (int i = 0; i < operationsArray.length; i++) {
-                if (operationsArray[i].equals("/")) {
-                    tmp = numbers[i] / numbers[i + 1];
-                    numbers[i] = tmp;
-                    numbers[i + 1] = tmp;
-                } else if (operationsArray[i].equals("*")) {
-                    tmp = numbers[i] * numbers[i + 1];
-                    numbers[i] = tmp;
-                    numbers[i + 1] = tmp;
-                } else if (operationsArray[i].equals("+") || operationsArray[i].equals("-")) {
-                    flag = false;
-                }
-            }
-
-            if (flag) {
-                return tmp;
-            }
-
-            for (int i = 0; i < operationsArray.length; i++) {
-                if (operationsArray[i].equals("+")) {
-                    tmp = numbers[i] + numbers[i + 1];
-                    numbers[i + 1] = tmp;
-                    result = tmp;
-                } else if (operationsArray[i].equals("-")) {
-                    tmp = numbers[i] - numbers[i + 1];
-                    numbers[i + 1] = tmp;
-                    result = tmp;
-                }
-            }
+            double result = calcKernel(numbersArray, operationsArray);
 
             return result;
         } catch (NumberFormatException e) {
             throw new NumberFormatException("String can't contain letters");
+        }
+    }
+
+    private double calcKernel(double[] numbersArray, Operations[] operationsArray) {
+        if (operationsArray.length == 0) {
+            return numbersArray[0];
+        }
+
+        boolean isOnlyFirstPriorityOperationsInExpression = true;
+        double resultFirstPriorityOperations = 0;
+        int i = 0;
+        for (Operations operation : operationsArray) {
+            double resultTmp = 0;
+            switch (operation) {
+                case DIVIDE:
+                    resultTmp = firstPriorityAction(numbersArray, i, operation);
+                    break;
+                case MULTIPLY:
+                    resultTmp = firstPriorityAction(numbersArray, i, operation);
+                    break;
+                case SUM:
+                    isOnlyFirstPriorityOperationsInExpression = false;
+                    break;
+                case SUBTRACT:
+                    isOnlyFirstPriorityOperationsInExpression = false;
+                    break;
+            }
+            resultFirstPriorityOperations = resultTmp;
+            i++;
+        }
+
+        if (isOnlyFirstPriorityOperationsInExpression) {
+            return resultFirstPriorityOperations;
+        }
+
+        i = 0;
+        double result = 0;
+        for (Operations operation : operationsArray) {
+            double resultTmp = 0;
+            switch (operation) {
+                case SUM:
+                    result = secondPriorityAction(numbersArray, i, operation);
+                    break;
+                case SUBTRACT:
+                    result = secondPriorityAction(numbersArray, i, operation);
+                    break;
+            }
+            i++;
+        }
+        return result;
+    }
+
+    private double secondPriorityAction(double[] numbers, int i, Operations operation) {
+        double resultTmp;
+        double result;
+        resultTmp = operation.action(numbers[i], numbers[i + 1]);
+        numbers[i + 1] = resultTmp;
+        result = resultTmp;
+        return result;
+    }
+
+    private double firstPriorityAction(double[] numbers, int i, Operations operation) {
+        double resultTmp;
+        resultTmp = operation.action(numbers[i], numbers[i + 1]);
+        numbers[i] = resultTmp;
+        numbers[i + 1] = resultTmp;
+        return resultTmp;
+    }
+
+    private void parseNumbersFromStringToDouble(String[] parsedNumbers, int index, double[] numbers) {
+        for (int i = 0; i < parsedNumbers.length - index; i++) {
+            numbers[i] = Double.parseDouble(parsedNumbers[i + index]);
+        }
+    }
+
+    private void filterOperationSymbolsFromNonNumberSymbols(List<Operations> operationsList, String operator) {
+        switch (operator) {
+            case sum:
+                operationsList.add(Operations.SUM);
+                break;
+            case sub:
+                operationsList.add(Operations.SUBTRACT);
+                break;
+            case mul:
+                operationsList.add(Operations.MULTIPLY);
+                break;
+            case div:
+                operationsList.add(Operations.DIVIDE);
+                break;
         }
     }
 }
