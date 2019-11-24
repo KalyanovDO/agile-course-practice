@@ -38,7 +38,7 @@ public class StringCalc {
                 return x / y;
             }
         };
-        public abstract double action(final double x, final double y);
+        public abstract double action(double x, double y);
     }
 
     private double calcImpl(final String string) {
@@ -126,7 +126,10 @@ public class StringCalc {
         return result;
     }
 
-    private double secondPriorityAction(final double[] numbers, final int i, final Operations operation) {
+    private double secondPriorityAction(
+            final double[] numbers,
+            final int i,
+            final Operations operation) {
         double resultTmp;
         double result;
         resultTmp = operation.action(numbers[i], numbers[i + 1]);
@@ -135,7 +138,10 @@ public class StringCalc {
         return result;
     }
 
-    private double firstPriorityAction(final double[] numbers, final int i, final Operations operation) {
+    private double firstPriorityAction(
+            final double[] numbers,
+            final int i,
+            final Operations operation) {
         double resultTmp;
         resultTmp = operation.action(numbers[i], numbers[i + 1]);
         numbers[i] = resultTmp;
