@@ -12,33 +12,33 @@ public class StringCalc {
         return calcImpl(string);
     }
 
-    private static final String sum = "+";
-    private static final String sub = "-";
-    private static final String mul = "*";
-    private static final String div = "/";
+    private static final String SUMOPERATOR = "+";
+    private static final String SUBOPERATOR = "-";
+    private static final String MULOPERATOR = "*";
+    private static final String DIVOPERATOR = "/";
 
-    private enum Operations{
-        SUM{
-            public double action(double x, double y) {
+    private enum Operations {
+        SUMMARY {
+            public double action(final double x, final double y) {
                 return x + y;
             }
         },
-        SUBTRACT{
-            public double action(double x, double y) {
+        SUBTRACT {
+            public double action(final double x, final double y) {
                 return x - y;
             }
         },
-        MULTIPLY{
-            public double action(double x, double y) {
+        MULTIPLY {
+            public double action(final double x, final double y) {
                 return x * y;
             }
         },
-        DIVIDE{
-            public double action(double x, double y) {
+        DIVIDE {
+            public double action(final double x, final double y) {
                 return x / y;
             }
         };
-        public abstract double action(double x, double y);
+        public abstract double action(final double x, final double y);
     }
 
     private double calcImpl(final String string) {
@@ -47,7 +47,7 @@ public class StringCalc {
             String[] parsedNumbers = string.split("\\+|\\-|\\*|\\/");
             String[] parsedOperators = string.split("[1234567890\\.a-z]*");
             int index = 0;
-            char subSymbol = sub.charAt(0);
+            char subSymbol = SUBOPERATOR.charAt(0);
             if (firstSymbol == subSymbol) {
                 index++;
                 parsedNumbers[index] = subSymbol + parsedNumbers[index];
@@ -73,7 +73,7 @@ public class StringCalc {
         }
     }
 
-    private double calcKernel(double[] numbersArray, Operations[] operationsArray) {
+    private double calcKernel(final double[] numbersArray, final Operations[] operationsArray) {
         if (operationsArray.length == 0) {
             return numbersArray[0];
         }
@@ -90,11 +90,13 @@ public class StringCalc {
                 case MULTIPLY:
                     resultTmp = firstPriorityAction(numbersArray, i, operation);
                     break;
-                case SUM:
+                case SUMMARY:
                     isOnlyFirstPriorityOperationsInExpression = false;
                     break;
                 case SUBTRACT:
                     isOnlyFirstPriorityOperationsInExpression = false;
+                    break;
+                default:
                     break;
             }
             resultFirstPriorityOperations = resultTmp;
@@ -110,11 +112,13 @@ public class StringCalc {
         for (Operations operation : operationsArray) {
             double resultTmp = 0;
             switch (operation) {
-                case SUM:
+                case SUMMARY:
                     result = secondPriorityAction(numbersArray, i, operation);
                     break;
                 case SUBTRACT:
                     result = secondPriorityAction(numbersArray, i, operation);
+                    break;
+                default:
                     break;
             }
             i++;
@@ -122,7 +126,7 @@ public class StringCalc {
         return result;
     }
 
-    private double secondPriorityAction(double[] numbers, int i, Operations operation) {
+    private double secondPriorityAction(final double[] numbers, final int i, final Operations operation) {
         double resultTmp;
         double result;
         resultTmp = operation.action(numbers[i], numbers[i + 1]);
@@ -131,7 +135,7 @@ public class StringCalc {
         return result;
     }
 
-    private double firstPriorityAction(double[] numbers, int i, Operations operation) {
+    private double firstPriorityAction(final double[] numbers, final int i, final Operations operation) {
         double resultTmp;
         resultTmp = operation.action(numbers[i], numbers[i + 1]);
         numbers[i] = resultTmp;
@@ -139,25 +143,32 @@ public class StringCalc {
         return resultTmp;
     }
 
-    private void parseNumbersFromStringToDouble(String[] parsedNumbers, int index, double[] numbers) {
+    private void parseNumbersFromStringToDouble(
+            final String[] parsedNumbers,
+            final int index,
+            final double[] numbers) {
         for (int i = 0; i < parsedNumbers.length - index; i++) {
             numbers[i] = Double.parseDouble(parsedNumbers[i + index]);
         }
     }
 
-    private void filterOperationSymbolsFromNonNumberSymbols(List<Operations> operationsList, String operator) {
+    private void filterOperationSymbolsFromNonNumberSymbols(
+            final List<Operations> operationsList,
+            final String operator) {
         switch (operator) {
-            case sum:
-                operationsList.add(Operations.SUM);
+            case SUMOPERATOR:
+                operationsList.add(Operations.SUMMARY);
                 break;
-            case sub:
+            case SUBOPERATOR:
                 operationsList.add(Operations.SUBTRACT);
                 break;
-            case mul:
+            case MULOPERATOR:
                 operationsList.add(Operations.MULTIPLY);
                 break;
-            case div:
+            case DIVOPERATOR:
                 operationsList.add(Operations.DIVIDE);
+                break;
+            default:
                 break;
         }
     }
