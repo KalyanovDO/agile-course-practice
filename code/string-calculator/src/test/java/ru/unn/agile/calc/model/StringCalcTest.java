@@ -103,4 +103,25 @@ public class StringCalcTest {
         var number = calc.result("-7*5+1+5*6");
         assertEquals(-7 * 5 + 1 + 5 * 6, number, delta);
     }
+
+    @Test
+    public void canParseMultiplicationWithSum3() {
+        StringCalc calc = new StringCalc();
+        var number = calc.result("1 + 2*3 - 4/5");
+        assertEquals(1 + 2*3 - 4./5., number, delta);
+    }
+
+    @Test
+    public void canParseMultiplicationWithSum4() {
+        StringCalc calc = new StringCalc();
+        var number = calc.result("1 - 7 * 9 + 1");
+        assertEquals(1 - 7 * 9 + 1, number, delta);
+    }
+
+    @Test
+    public void canParseDivide() {
+        StringCalc calc = new StringCalc();
+        var number = calc.result("4/5");
+        assertEquals(4./5., number, delta);
+    }
 }

@@ -83,6 +83,10 @@ public class StringCalc {
         double result = 0;
         for (Operation operation : operationsArray) {
             switch (operation) {
+                case DIVIDE:
+                case MULTIPLY:
+                    numbersArray[i+1] = numbersArray[i];
+                    break;
                 case SUMMARY:
                 case SUBTRACT:
                     result = secondPriorityAction(numbersArray, i, operation);
