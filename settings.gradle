@@ -193,6 +193,8 @@ include "code/dijkstra-algorithm/View"
 project(":code/dijkstra-algorithm/View").name = "dijkstra-algorithm-View"
 include "code/dijkstra-algorithm/ViewModel"
 project(":code/dijkstra-algorithm/ViewModel").name = "dijkstra-algorithm-ViewModel"
+include "code/dijkstra-algorithm/Infrastructure"
+project(":code/dijkstra-algorithm/Infrastructure").name = "dijkstra-algorithm-Infrastructure"
 // Смирнов Егор
 include "code/priority-queue"
 project(":code/priority-queue").name = "priority-queue"

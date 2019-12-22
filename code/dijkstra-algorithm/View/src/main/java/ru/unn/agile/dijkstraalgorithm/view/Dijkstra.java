@@ -8,6 +8,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import ru.unn.agile.dijkstraalgorithm.viewmodel.EdgeViewModel;
 import ru.unn.agile.dijkstraalgorithm.viewmodel.ViewModel;
 
+import ru.unn.agile.dijkstraalgorithm.infrastructure.TxtLogger;
+
 
 public class Dijkstra {
 
@@ -50,6 +52,7 @@ public class Dijkstra {
 
     @FXML
     void initialize() {
+        viewModel.setLogger(new TxtLogger("./TxtLogger-lab3.log"));
         initAddEdgeForm();
         initTableView();
         initControlPanel();
@@ -88,17 +91,32 @@ public class Dijkstra {
         calculatePathButton.setOnAction(e -> viewModel.calculatePath());
 
         fromComboBox.valueProperty().bindBidirectional(viewModel.vertexFromProperty());
+        fromComboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                viewModel.onExpressionCbFocusChanged();
+            }
+        });
         toComboBox.valueProperty().bindBidirectional(viewModel.vertexToProperty());
+        toComboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                viewModel.onExpressionCbFocusChanged();
+            }
+        });
 
         resultPathTextArea.textProperty().bindBidirectional(viewModel.resultPathProperty());
     }
 
-    private  void initTextField(final TextField textField,
+    private void initTextField(final TextField textField,
                                 final String tooltip,
                                 final Property<String> property) {
         bindTextFieldProperty(textField, property);
         setTextFieldTooltip(textField, tooltip);
         addListenerForRemovingSpaces(textField);
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                viewModel.onExpressionTfFocusChanged();
+            }
+        });
     }
 
     private void setTextFieldTooltip(final TextField textField, final String tooltip) {
