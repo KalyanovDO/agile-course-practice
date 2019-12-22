@@ -172,7 +172,8 @@ public class ViewModelTest {
         assertTrue(message.matches(".*" + ViewModel.LogMessages.EDITING_INPUT
                 + ".*" + VERTEX1_CORRECT_INPUT
                 + ".*" + VERTEX2_CORRECT_INPUT
-                + ".*" + WEIGHT_CORRECT_INPUT + ".*Correct input.*"));
+                + ".*" + WEIGHT_CORRECT_INPUT
+                + ".*Correct input.*"));
     }
 
     @Test
@@ -182,9 +183,10 @@ public class ViewModelTest {
         viewModel.addEdge();
         String message = viewModel.getLogList().get(0);
         assertTrue(message.matches(".*" + ViewModel.LogMessages.EDITING_INPUT
-                + ".*" + VERTEX1_CORRECT_INPUT
+                + ".*" + VERTEX1_INCORRECT_INPUT
                 + ".*" + VERTEX2_CORRECT_INPUT
-                + ".*" + WEIGHT_CORRECT_INPUT + ".*Incorrect input.*"));
+                + ".*" + WEIGHT_CORRECT_INPUT
+                + ".*Incorrect input.*"));
     }
 
     @Test

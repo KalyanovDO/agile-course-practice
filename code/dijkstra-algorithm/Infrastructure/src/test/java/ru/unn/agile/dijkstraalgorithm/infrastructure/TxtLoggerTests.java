@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static ru.unn.agile.dijkstraalgorithm.infrastructure.RegexMatcher.matchesPattern;
 
 public class TxtLoggerTests {
-    private static final String FILENAME = "./TxtLogger_Tests-lab3.log";
+    private static final String FILENAME = "./TxtLogger_Tests-lab3-dijkstra-algorithm.log";
     private TxtLogger txtLogger;
 
     @Before
@@ -32,23 +32,23 @@ public class TxtLoggerTests {
         try {
             new BufferedReader(new FileReader(FILENAME));
         } catch (FileNotFoundException e) {
-            fail("File " + FILENAME + " wasn't found!");
+            fail("File " + FILENAME + " wasn't found.");
         }
     }
 
     @Test
     public void canWriteLogMessage() {
-        String testMessage = "Test message";
+        String checkMessage = "Test message";
 
-        txtLogger.log(testMessage);
+        txtLogger.log(checkMessage);
 
         String message = txtLogger.getLog().get(0);
-        assertThat(message, matchesPattern(".*" + testMessage + "$"));
+        assertThat(message, matchesPattern(".*" + checkMessage + "$"));
     }
 
     @Test
-    public void canWriteSeveralLogMessage() {
-        String[] messages = {"Test message 1", "Test message 2"};
+    public void canWriteSeveralLogMessages() {
+        String[] messages = {"Test message 1st", "Test message 2nd"};
 
         txtLogger.log(messages[0]);
         txtLogger.log(messages[1]);
@@ -61,9 +61,9 @@ public class TxtLoggerTests {
 
     @Test
     public void doesLogContainDateAndTime() {
-        String testMessage = "Test message";
+        String checkMessage = "Test message";
 
-        txtLogger.log(testMessage);
+        txtLogger.log(checkMessage);
 
         String message = txtLogger.getLog().get(0);
         assertThat(message, matchesPattern("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} > .*"));
