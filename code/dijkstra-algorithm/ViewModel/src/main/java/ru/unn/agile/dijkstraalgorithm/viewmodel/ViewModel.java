@@ -214,7 +214,7 @@ public class ViewModel {
         updateLogs();
     }
 
-    public void onExpressionTfFocusChanged() {
+    public void onExpressionTextFieldFocusChanged() {
         StringBuilder message = new StringBuilder(LogMessages.EDITING_INPUT);
         message.append("[")
                 .append(vertex1.get())
@@ -236,7 +236,7 @@ public class ViewModel {
         updateLogs();
     }
 
-    public void onExpressionCbFocusChanged() {
+    public void onExpressionComboBoxFocusChanged() {
         StringBuilder message = new StringBuilder(LogMessages.EDITING_INPUT);
         message.append("[from ")
                 .append(vertexFrom.get())

@@ -166,7 +166,7 @@ public class ViewModelTest {
     @Test
     public void logContainsUpdatingInputInfoCorrect() {
         setFormTextFields(VERTEX1_CORRECT_INPUT, VERTEX2_CORRECT_INPUT, WEIGHT_CORRECT_INPUT);
-        viewModel.onExpressionTfFocusChanged();
+        viewModel.onExpressionTextFieldFocusChanged();
         viewModel.addEdge();
         String message = viewModel.getLogList().get(0);
         assertTrue(message.matches(".*" + ViewModel.LogMessages.EDITING_INPUT
@@ -178,7 +178,7 @@ public class ViewModelTest {
     @Test
     public void logContainsUpdatingInputInfoIncorrect() {
         setFormTextFields(VERTEX1_INCORRECT_INPUT, VERTEX2_CORRECT_INPUT, WEIGHT_CORRECT_INPUT);
-        viewModel.onExpressionTfFocusChanged();
+        viewModel.onExpressionTextFieldFocusChanged();
         viewModel.addEdge();
         String message = viewModel.getLogList().get(0);
         assertTrue(message.matches(".*" + ViewModel.LogMessages.EDITING_INPUT

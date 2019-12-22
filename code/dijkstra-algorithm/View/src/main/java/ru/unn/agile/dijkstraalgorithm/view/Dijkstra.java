@@ -114,7 +114,7 @@ public class Dijkstra {
         addListenerForRemovingSpaces(textField);
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                viewModel.onExpressionTfFocusChanged();
+                viewModel.onExpressionTextFieldFocusChanged();
             }
         });
     }
