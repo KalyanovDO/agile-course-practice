@@ -93,13 +93,13 @@ public class Dijkstra {
         fromComboBox.valueProperty().bindBidirectional(viewModel.vertexFromProperty());
         fromComboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                viewModel.onExpressionCbFocusChanged();
+                viewModel.onExpressionComboBoxFocusChanged();
             }
         });
         toComboBox.valueProperty().bindBidirectional(viewModel.vertexToProperty());
         toComboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                viewModel.onExpressionCbFocusChanged();
+                viewModel.onExpressionComboBoxFocusChanged();
             }
         });
 
