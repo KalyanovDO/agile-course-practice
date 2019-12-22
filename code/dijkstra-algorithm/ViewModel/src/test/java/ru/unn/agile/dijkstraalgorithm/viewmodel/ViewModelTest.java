@@ -191,7 +191,7 @@ public class ViewModelTest {
     public void logContainsUpdatingVertexPathIncorrect() {
         addEdgeAndCreateGraph();
         viewModel.vertexFromProperty().setValue(VERTEX1_INCORRECT_INPUT);
-        viewModel.onExpressionCbFocusChanged();
+        viewModel.onExpressionComboBoxFocusChanged();
         String message = viewModel.getLogList().get(2);
         assertTrue(message.matches(".*" + ViewModel.LogMessages.EDITING_INPUT
                 + ".*\\[from " + VERTEX1_INCORRECT_INPUT + " to null.*"));
@@ -202,7 +202,7 @@ public class ViewModelTest {
         addEdgeAndCreateGraph();
         chooseFromComboBox(0);
         chooseToComboBox(1);
-        viewModel.onExpressionCbFocusChanged();
+        viewModel.onExpressionComboBoxFocusChanged();
         String message = viewModel.getLogList().get(2);
         assertTrue(message.matches(".*" + ViewModel.LogMessages.EDITING_INPUT
                 + ".*\\[from " + VERTEX1_CORRECT_INPUT + " to "
