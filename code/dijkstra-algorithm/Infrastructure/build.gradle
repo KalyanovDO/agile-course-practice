@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':dijkstra-algorithm-ViewModel')
+    testCompile project(':dijkstra-algorithm-ViewModel').sourceSets.test.output
+}

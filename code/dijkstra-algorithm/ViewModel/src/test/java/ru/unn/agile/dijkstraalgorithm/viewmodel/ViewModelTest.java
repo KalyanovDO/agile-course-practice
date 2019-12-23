@@ -4,6 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 
@@ -21,9 +23,15 @@ public class ViewModelTest {
 
     private ViewModel viewModel;
 
+    public void setExternalViewModel(final ViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
+
     @Before
     public void setUp() {
-        viewModel = new ViewModel();
+        if (viewModel == null) {
+            viewModel = new ViewModel(new EmptyLogger());
+        }
     }
 
     @After
@@ -112,7 +120,96 @@ public class ViewModelTest {
         assertNull(viewModel.resultPathProperty().get());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void canInitEmptyLogger() {
+        viewModel.setLogger(null);
+    }
 
+    @Test
+    public void logIsEmptyInTheBeginning() {
+        List<String> log = viewModel.getLogList();
+
+        assertTrue(log.isEmpty());
+    }
+
+    @Test
+    public void logContainsProperMessageAfterCalculation() {
+        addEdgeAndCreateGraph();
+        chooseFromComboBox(0);
+        chooseToComboBox(1);
+        viewModel.calculatePath();
+        String message = viewModel.getLogList().get(2);
+
+        assertTrue(message.matches(".*" + ViewModel.LogMessages.CALCULATE_WAS_PRESSED + ".*"));
+    }
+
+    @Test
+    public void logContainsProperMessageAfterWrongCalculation() {
+        addEdgeAndCreateGraph();
+        viewModel.calculatePath();
+        String message = viewModel.getLogList().get(2);
+
+        assertTrue(message.matches(".*" + ViewModel.LogMessages.CALCULATE_WAS_PRESSED + ".*"));
+    }
+
+    @Test
+    public void logContainsInputArgumentsAfterAddingEdge() {
+        addEdgeAndCreateGraph();
+        String message = viewModel.getLogList().get(0);
+
+        assertTrue(message.matches(".*" + ViewModel.LogMessages.ADD_EDGE_WAS_PRESSED
+                + ".*" + VERTEX1_CORRECT_INPUT
+                + ".*" + VERTEX2_CORRECT_INPUT
+                + ".*" + WEIGHT_CORRECT_INPUT + ".*"));
+    }
+
+    @Test
+    public void logContainsUpdatingInputInfoCorrect() {
+        setFormTextFields(VERTEX1_CORRECT_INPUT, VERTEX2_CORRECT_INPUT, WEIGHT_CORRECT_INPUT);
+        viewModel.onExpressionTextFieldFocusChanged();
+        viewModel.addEdge();
+        String message = viewModel.getLogList().get(0);
+        assertTrue(message.matches(".*" + ViewModel.LogMessages.EDITING_INPUT
+                + ".*" + VERTEX1_CORRECT_INPUT
+                + ".*" + VERTEX2_CORRECT_INPUT
+                + ".*" + WEIGHT_CORRECT_INPUT
+                + ".*Correct input.*"));
+    }
+
+    @Test
+    public void logContainsUpdatingInputInfoIncorrect() {
+        setFormTextFields(VERTEX1_INCORRECT_INPUT, VERTEX2_CORRECT_INPUT, WEIGHT_CORRECT_INPUT);
+        viewModel.onExpressionTextFieldFocusChanged();
+        viewModel.addEdge();
+        String message = viewModel.getLogList().get(0);
+        assertTrue(message.matches(".*" + ViewModel.LogMessages.EDITING_INPUT
+                + ".*" + VERTEX1_INCORRECT_INPUT
+                + ".*" + VERTEX2_CORRECT_INPUT
+                + ".*" + WEIGHT_CORRECT_INPUT
+                + ".*Incorrect input.*"));
+    }
+
+    @Test
+    public void logContainsUpdatingVertexPathIncorrect() {
+        addEdgeAndCreateGraph();
+        viewModel.vertexFromProperty().setValue(VERTEX1_INCORRECT_INPUT);
+        viewModel.onExpressionComboBoxFocusChanged();
+        String message = viewModel.getLogList().get(2);
+        assertTrue(message.matches(".*" + ViewModel.LogMessages.EDITING_INPUT
+                + ".*\\[from " + VERTEX1_INCORRECT_INPUT + " to null.*"));
+    }
+
+    @Test
+    public void logContainsUpdatingVertexPathCorrect() {
+        addEdgeAndCreateGraph();
+        chooseFromComboBox(0);
+        chooseToComboBox(1);
+        viewModel.onExpressionComboBoxFocusChanged();
+        String message = viewModel.getLogList().get(2);
+        assertTrue(message.matches(".*" + ViewModel.LogMessages.EDITING_INPUT
+                + ".*\\[from " + VERTEX1_CORRECT_INPUT + " to "
+                + VERTEX2_CORRECT_INPUT + ".*"));
+    }
 
     private boolean isAddEdgeButtonDisabled() {
         return viewModel.addingNewEdgeDisabledProperty().get();

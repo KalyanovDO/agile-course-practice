@@ -33,8 +33,26 @@ public class ViewModel {
     private final ObservableList<EdgeViewModel> edgeList = FXCollections.observableArrayList();
     private final ObservableList<String> vertexList = FXCollections.observableArrayList();
 
+    private ILogger logger;
+    private final StringProperty logs = new SimpleStringProperty();
+
+    public final void setLogger(final ILogger logger) {
+        if (logger == null) {
+            throw new IllegalArgumentException("Logger parameter can't be null");
+        }
+        this.logger = logger;
+    }
 
     public ViewModel() {
+        init();
+    }
+
+    public ViewModel(final ILogger logger) {
+        setLogger(logger);
+        init();
+    }
+
+    private void init() {
         clearFormInput();
 
         BooleanBinding canCalculateBoolBinding = new BooleanBinding() {
@@ -54,6 +72,7 @@ public class ViewModel {
     public void addEdge() {
         EdgeViewModel newEdge = new EdgeViewModel(vertex1.get(), vertex2.get(), weight.get());
         edgeList.add(newEdge);
+        logForAddedEdge();
 
         clearFormInput();
     }
@@ -86,7 +105,11 @@ public class ViewModel {
     }
 
     public void createGraph() {
+        StringBuilder message = new StringBuilder(LogMessages.CREATE_GRAPH_WAS_PRESSED);
         if (edgeList.isEmpty()) {
+            message.append(" unsuccessfully. List of edges is empty");
+            logger.log(message.toString());
+            updateLogs();
             return;
         }
 
@@ -96,6 +119,10 @@ public class ViewModel {
 
         graph = new DijkstraGraph(list);
         updateVertexList();
+
+        message.append(" successfully.");
+        logger.log(message.toString());
+        updateLogs();
     }
 
     private void updateVertexList() {
@@ -106,56 +133,129 @@ public class ViewModel {
     public void calculatePath() {
         String toPath = getVertexTo();
         String fromPath = getVertexFrom();
+        StringBuilder messageCalculate = new StringBuilder(LogMessages.CALCULATE_WAS_PRESSED);
         if (toPath == null || fromPath == null) {
+            messageCalculate.append("unsuccessfully. Check From and To vertexes.");
+            logger.log(messageCalculate.toString());
+            updateLogs();
             return;
         }
 
         graph.calculate(fromPath);
+        messageCalculate.append("successfully.");
+        logger.log(messageCalculate.toString());
+        updateLogs();
+
         resultPath.setValue(graph.getPath(toPath));
     }
 
     public StringProperty vertex1Property() {
         return vertex1;
     }
-
     public StringProperty vertex2Property() {
         return vertex2;
     }
-
     public StringProperty weightProperty() {
         return weight;
     }
-
     private String getVertexFrom() {
         return vertexFrom.get();
     }
-
     public StringProperty vertexFromProperty() {
         return vertexFrom;
     }
-
-
     private String getVertexTo() {
         return vertexTo.get();
     }
-
     public StringProperty vertexToProperty() {
         return vertexTo;
     }
-
     public StringProperty resultPathProperty() {
         return resultPath;
     }
-
     public SimpleBooleanProperty addingNewEdgeDisabledProperty() {
         return addingNewEdgeDisabled;
     }
-
     public ObservableList<EdgeViewModel> getEdgeList() {
         return edgeList;
     }
-
     public ObservableList<String> getVertexList() {
         return vertexList;
+    }
+    public StringProperty logsProperty() {
+        return logs;
+    }
+    public final String getLogs() {
+        return logs.get();
+    }
+    public final List<String> getLogList() {
+        return logger.getLog();
+    }
+
+    private void updateLogs() {
+        List<String> fullLog = logger.getLog();
+        StringBuilder record = new StringBuilder(new String(""));
+        for (String log : fullLog) {
+            record.append(log).append("\n");
+        }
+        logs.set(record.toString());
+    }
+
+    private void logForAddedEdge() {
+        StringBuilder message = new StringBuilder(LogMessages.ADD_EDGE_WAS_PRESSED);
+        message.append("[")
+                .append(vertex1.get())
+                .append(",")
+                .append(vertex2.get())
+                .append(",")
+                .append(weight.get())
+                .append("]");
+        logger.log(message.toString());
+        updateLogs();
+    }
+
+    public void onExpressionTextFieldFocusChanged() {
+        StringBuilder message = new StringBuilder(LogMessages.EDITING_INPUT);
+        message.append("[")
+                .append(vertex1.get())
+                .append(",")
+                .append(vertex2.get())
+                .append(",")
+                .append(weight.get())
+                .append("]. ");
+
+        if (isVertex1InputCorrect()
+                && isVertex2InputCorrect()
+                && isWeightInputCorrect()) {
+            message.append(LogMessages.CORRECT_INPUT);
+        } else {
+            message.append(LogMessages.INCORRECT_INPUT);
+        }
+
+        logger.log(message.toString());
+        updateLogs();
+    }
+
+    public void onExpressionComboBoxFocusChanged() {
+        StringBuilder message = new StringBuilder(LogMessages.EDITING_INPUT);
+        message.append("[from ")
+                .append(vertexFrom.get())
+                .append(" to ")
+                .append(vertexTo.get())
+                .append("]. ");
+
+        logger.log(message.toString());
+        updateLogs();
+    }
+
+    final class LogMessages {
+        public static final String ADD_EDGE_WAS_PRESSED = "Edge was added: ";
+        public static final String CREATE_GRAPH_WAS_PRESSED = "Graph was created";
+        public static final String CALCULATE_WAS_PRESSED = "Calculation completed ";
+        public static final String EDITING_INPUT = "Updated input: ";
+        public static final String INCORRECT_INPUT = "Incorrect input. ";
+        public static final String CORRECT_INPUT = "Correct input. ";
+
+        private LogMessages() { }
     }
 }

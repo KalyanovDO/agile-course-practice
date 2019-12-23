@@ -5,6 +5,7 @@ import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import ru.unn.agile.dijkstraalgorithm.infrastructure.TextLogger;
 import ru.unn.agile.dijkstraalgorithm.viewmodel.EdgeViewModel;
 import ru.unn.agile.dijkstraalgorithm.viewmodel.ViewModel;
 
@@ -50,6 +51,7 @@ public class Dijkstra {
 
     @FXML
     void initialize() {
+        viewModel.setLogger(new TextLogger("./TextLogger-lab3.log"));
         initAddEdgeForm();
         initTableView();
         initControlPanel();
@@ -88,17 +90,32 @@ public class Dijkstra {
         calculatePathButton.setOnAction(e -> viewModel.calculatePath());
 
         fromComboBox.valueProperty().bindBidirectional(viewModel.vertexFromProperty());
+        fromComboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                viewModel.onExpressionComboBoxFocusChanged();
+            }
+        });
         toComboBox.valueProperty().bindBidirectional(viewModel.vertexToProperty());
+        toComboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                viewModel.onExpressionComboBoxFocusChanged();
+            }
+        });
 
         resultPathTextArea.textProperty().bindBidirectional(viewModel.resultPathProperty());
     }
 
-    private  void initTextField(final TextField textField,
+    private void initTextField(final TextField textField,
                                 final String tooltip,
                                 final Property<String> property) {
         bindTextFieldProperty(textField, property);
         setTextFieldTooltip(textField, tooltip);
         addListenerForRemovingSpaces(textField);
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                viewModel.onExpressionTextFieldFocusChanged();
+            }
+        });
     }
 
     private void setTextFieldTooltip(final TextField textField, final String tooltip) {
