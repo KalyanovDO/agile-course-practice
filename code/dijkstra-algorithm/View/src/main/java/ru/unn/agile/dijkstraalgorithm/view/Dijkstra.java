@@ -5,10 +5,9 @@ import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import ru.unn.agile.dijkstraalgorithm.infrastructure.TextLogger;
 import ru.unn.agile.dijkstraalgorithm.viewmodel.EdgeViewModel;
 import ru.unn.agile.dijkstraalgorithm.viewmodel.ViewModel;
-
-import ru.unn.agile.dijkstraalgorithm.infrastructure.TxtLogger;
 
 
 public class Dijkstra {
@@ -52,7 +51,7 @@ public class Dijkstra {
 
     @FXML
     void initialize() {
-        viewModel.setLogger(new TxtLogger("./TxtLogger-lab3.log"));
+        viewModel.setLogger(new TextLogger("./TextLogger-lab3.log"));
         initAddEdgeForm();
         initTableView();
         initControlPanel();
