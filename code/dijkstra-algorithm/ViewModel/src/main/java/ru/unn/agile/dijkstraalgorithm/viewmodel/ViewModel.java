@@ -133,7 +133,7 @@ public class ViewModel {
     public void calculatePath() {
         String toPath = getVertexTo();
         String fromPath = getVertexFrom();
-        StringBuilder messageCalculate = new StringBuilder(LogMessages.CALCULATE_WAS_PRESSED);;
+        StringBuilder messageCalculate = new StringBuilder(LogMessages.CALCULATE_WAS_PRESSED);
         if (toPath == null || fromPath == null) {
             messageCalculate.append("unsuccessfully. Check From and To vertexes.");
             logger.log(messageCalculate.toString());
