@@ -11,7 +11,7 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static ru.unn.agile.dijkstraalgorithm.infrastructure.RegexMatcher.matchesPattern;
+import static ru.unn.agile.dijkstraalgorithm.infrastructure.RegExprMatcher.matchesPattern;
 
 public class TextLoggerTests {
     private static final String FILENAME = "./TxtLogger_Tests-lab3-dijkstra-algorithm.log";
