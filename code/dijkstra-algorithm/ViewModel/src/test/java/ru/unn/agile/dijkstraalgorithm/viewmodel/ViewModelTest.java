@@ -30,7 +30,7 @@ public class ViewModelTest {
     @Before
     public void setUp() {
         if (viewModel == null) {
-            viewModel = new ViewModel(new FakeLogger());
+            viewModel = new ViewModel(new EmptyLogger());
         }
     }
 

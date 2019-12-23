@@ -48,14 +48,14 @@ public class TxtLoggerTests {
 
     @Test
     public void canWriteSeveralLogMessages() {
-        String[] messages = {"Test message 1st", "Test message 2nd"};
+        String[] messageList = {"Test message 1st", "Test message 2nd"};
 
-        txtLogger.log(messages[0]);
-        txtLogger.log(messages[1]);
+        txtLogger.log(messageList[0]);
+        txtLogger.log(messageList[1]);
 
         List<String> actualMessages = txtLogger.getLog();
         for (int i = 0; i < actualMessages.size(); i++) {
-            assertThat(actualMessages.get(i), matchesPattern(".*" + messages[i] + "$"));
+            assertThat(actualMessages.get(i), matchesPattern(".*" + messageList[i] + "$"));
         }
     }
 
